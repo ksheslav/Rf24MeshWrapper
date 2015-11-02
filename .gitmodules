@@ -1,0 +1,9 @@
+[submodule "RF24Network"]
+	path = RF24Network
+	url = https://github.com/maniacbug/RF24Network.git
+[submodule "RF24"]
+	path = RF24
+	url = https://github.com/maniacbug/RF24
+[submodule "RF24Mesh"]
+	path = RF24Mesh
+	url = https://github.com/TMRh20/RF24Mesh
