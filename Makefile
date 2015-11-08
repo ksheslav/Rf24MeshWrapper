@@ -5,7 +5,7 @@ RF24_CONF=RF24/RF24_config.h
 RF24_CPP=RF24/RF24.cpp
 RF24_H=RF24/RF24.h
 WRAP=RF24Wrapper/rf24wrapper_wrap.cpp
-WRAP_O=RF24Wrapper/rf24wrapper_wrap.o
+WRAP_O=RF24Wrapper/rf24wrapper_wrap.so
 RPI_UTILITY=RF24/utility/RPi
 swig:
 	swig -v -c++ -java -outdir RF24Wrapper/src/nrf24/engineering/ \
@@ -18,6 +18,8 @@ compile_native:
 	make -C RF24/ RF24.o
 	#make bcm
 	make -C RF24/ bcm2835.o
+	#make bcm
+	make -C RF24/ spi.o
 	#make g++
 	g++ -fPIC -c $(WRAP) \
 	 					-I$(JAVA_HEADERS) \
@@ -26,7 +28,7 @@ compile_native:
 						-o $(WRAP_O) \
 						-include $(RF24_H)
 	#make gcc
-	gcc -shared -lstdc++ $(WRAP_O) RF24/RF24.o RF24/bcm2835.o \
+	gcc -g -shared -lstdc++  $(WRAP_O)  RF24/spi.o RF24/RF24.o RF24/bcm2835.o \
 			-o RF24Wrapper/rf24wrapper.so
 conmpile_main:
 	javac -d bin/ RF24Wrapper/src/nrf24/engineering/*.java src/rf24/wrapper/Main.java
