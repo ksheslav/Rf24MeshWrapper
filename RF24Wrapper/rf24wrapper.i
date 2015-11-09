@@ -4,8 +4,6 @@
 %include "typemaps.i"
 %{
 #include "../RF24/RF24.h"
-#include "../RF24/RF24_config.h"
-#include "../RF24/nRF24L01.h"
 %}
 
 %typemap(jni) const void* buf, void *buf, const uint8_t *address    "jbyteArray"
@@ -26,5 +24,3 @@
 %apply uint8_t *OUTPUT {uint8_t* pipe_num};
 
 %include "../RF24/RF24.h"
-%include "../RF24/RF24.h"
-%include "../RF24/RF24_config.h"
