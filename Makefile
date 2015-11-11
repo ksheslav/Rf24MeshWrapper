@@ -8,7 +8,7 @@ WRAP=RF24Wrapper/rf24wrapper_wrap.cpp
 WRAP_O=RF24Wrapper/rf24wrapper_wrap.o
 RPI_UTILITY=RF24/utility/RPi
 swig:
-	swig -v -c++ -java -outdir RF24Wrapper/src/ \
+	swig -v -c++ -java -outdir RF24Wrapper/src/nrf24/engineering/ \
 			-o $(WRAP)  \
 			-package nrf24.engineering RF24Wrapper/rf24wrapper.i
 
@@ -28,3 +28,9 @@ compile_native:
 	#make gcc
 	gcc -shared -lstdc++ $(WRAP_O) RF24/RF24.o RF24/bcm2835.o \
 			-o RF24Wrapper/rf24wrapper.so
+conmpile_main:
+	javac -d bin/ RF24Wrapper/src/nrf24/engineering/*.java src/rf24/wrapper/Main.java
+
+
+start_app:
+	java  -Djava.class.path=bin/ rf24.wrapper.Main
