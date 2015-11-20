@@ -1,5 +1,7 @@
-#JAVA_HEADERS=/usr/lib/jvm/java-8-oracle/include
-JAVA_HEADERS=/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt/include
+JAVA_HEADERS=/usr/lib/jvm/java-8-oracle/include
+CXX=arm-linux-gnueabihf-g++
+CC=arm-linux-gnueabihf-gcc
+#JAVA_HEADERS=/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt/include
 # RF24 
 NRF240l_H=RF24/nRF24L01.h
 RF24_CONF=RF24/RF24_config.h
@@ -22,21 +24,21 @@ RF24_MESH_H=RF24Mesh/RF24Mesh.h
 CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
 swig_rf24:
 	mkdir -p RF24Wrapper/src/nrf24/engineering/
-	swig -v -c++ -java -outdir RF24Wrapper/src/nrf24/engineering/ \
+	swig3.0 -v -c++ -java -outdir RF24Wrapper/src/nrf24/engineering/ \
 			-o $(WRAP_RF24)  \
 			-package nrf24.engineering swig/rf24wrapper.i
 
 swig_rf24_network:
 	mkdir -p RF24NetworkWrapper/src/nrf24network/engineering/
-	swig -v -c++ -java -outdir RF24NetworkWrapper/src/nrf24network/engineering/ \
+	swig3.0 -v -c++ -java -outdir RF24NetworkWrapper/src/nrf24network/engineering/ \
 			-o $(WRAP_RF24_NETWORK)  \
 			-package nrf24network.engineering swig/rf24networkwrapper.i
 
 swig_rf24_mesh:
 	mkdir -p RF24MeshWrapper/src/nrf24mesh/engineering/
-	swig -v -c++ -java -outdir RF24MeshWrapper/src/nrf24mesh/engineering/ \
+	swig3.0 -v -c++ -java -outdir RF24MeshWrapper/src/nrf24mesh/engineering/ \
 			-o $(WRAP_RF24_MESH)  \
-			-package nrf24mesh.engineering swig/rf24networkwrapper.i
+			-package nrf24mesh.engineering swig/rf24meshwrapper.i
 
 swig: swig_rf24 swig_rf24_network swig_rf24_mesh
 
@@ -50,39 +52,39 @@ compile_rf24:
 	#make bcm
 	make -C RF24/ spi.o
 	#make g++
-	g++ -fPIC -c $(CCFLAGS) $(WRAP_RF24) \
+	$(CXX) -fPIC -c $(CCFLAGS) $(WRAP_RF24) \
 	 					-I$(JAVA_HEADERS) \
 						-I$(JAVA_HEADERS)/linux \
 						-I./RF24 \
 						-o $(WRAP_RF24_O) \
 						-include $(RF24_H)
 	#make gcc
-	gcc -g -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_O)  RF24/spi.o RF24/RF24.o RF24/bcm2835.o \
+	$(CC) -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_O)  RF24/spi.o RF24/RF24.o RF24/bcm2835.o \
 			-o out/rf24wrapper.so
 
 compile_rf24_network:
 	mkdir -p out/
 	#make RF24Network
-	g++ -fPIC $(CCFLAGS) -std=c++0x -c $(WRAP_RF24_NETWORK) \
+	$(CXX) -fPIC $(CCFLAGS) -std=c++0x -c $(WRAP_RF24_NETWORK) \
 	 					-I$(JAVA_HEADERS) \
 						-I$(JAVA_HEADERS)/linux \
 						-I./RF24Network \
 						-I./RF24 \
 						-o $(WRAP_RF24_NETWORK_O) \
 						-include $(RF24_NETWORK_H) 
-	gcc -g -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_NETWORK_O)  RF24/spi.o RF24/RF24.o RF24/bcm2835.o \
+	$(CC) -g -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_NETWORK_O)  RF24/spi.o RF24/RF24.o RF24/bcm2835.o \
 			-o out/rf24networkwrapper.so
 compile_rf24_mesh:
 	mkdir -p out/
 	#make RF24Mesh
-	make -c RF24Mesh/ RF24Mesh.o
-	g++ -fPIC -c $(CCFLAGS) $(WRAP_RF24_MESH) \
+	make -C RF24Mesh/ RF24Mesh.o
+	$(CXX) -fPIC -c $(CCFLAGS) $(WRAP_RF24_MESH) \
 	 					-I$(JAVA_HEADERS) \
 						-I$(JAVA_HEADERS)/linux \
 						-I./RF24Mesh \
 						-o $(WRAP_RF24_MESH_O) \
 						-include $(RF24_NETWORK_H)
-	gcc -g -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_MESH_O)  RF24Mesh/RF24Mesh.o \
+	$(CC) -g -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_MESH_O)  RF24Mesh/RF24Mesh.o \
 			-o out/rf24meshwrapper.so
 
 compile_all: compile_rf24 compile_rf24_network compile_rf24_mesh
