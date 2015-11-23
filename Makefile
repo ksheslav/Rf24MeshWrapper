@@ -150,7 +150,7 @@ comnpile_with_dependencies:
 						-o $(WRAP_RF24_ALL_O) 
 						
 	$(CC) -g -shared -lstdc++ $(CCFLAGS)  $(WRAP_RF24_ALL_O)  RF24/RF24.o RF24Network/RF24Network.o RF24Mesh/RF24Mesh.o \
-			-o out/LIBNAME
+			-o out/$(LIBNAME)
 
 
 compile_all: compile_rf24 compile_rf24_network compile_rf24_mesh
